@@ -1,0 +1,27 @@
+- name: Server Configuration
+  hosts: ilahyaniS
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Install K3S Server
+      ansible.builtin.shell: |
+        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--write-kubeconfig-mode 644" sh -
+      args:
+        executable: /bin/bash
+    - name: Read K3S Node Token
+      ansible.builtin.slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: node_token
+    - name: Set Node Token variable
+      ansible.builtin.set_fact:
+        node_token: "{{ node_token.content | b64decode }}"
+    - name: Debug
+      ansible.builtin.debug:
+        msg: "node_token: {{ node_token }}"
+    - name: Save variable to a file
+      delegate_to: localhost
+      become: false
+      ansible.builtin.copy:
+        content: |
+          node_token: {{ node_token }}
+        dest: "{{ playbook_dir }}/../vars/node_token.yml"
