@@ -1,0 +1,16 @@
+apps:
+  - name: nginx
+    image: "nginx:latest"
+    port: 80
+    hostname: app1.com
+    replicas: 1
+  - name: httpd
+    image: "httpd:latest"
+    port: 80
+    hostname: app2.com
+    replicas: 3
+  - name: tomcat
+    image: "tomcat:latest"
+    port: 8080
+    hostname: app3.com
+    replicas: 1
