@@ -17,6 +17,8 @@ spec:
                   image: {{ item.image }}
                   ports:
                     - containerPort: {{ item.port }}
+                  args:
+                    - "-text=This is {{ item.name }}"
 
 ---
 
