@@ -13,13 +13,3 @@
         curl -sfL https://get.k3s.io | K3S_URL=https://192.168.56.110:6443 K3S_TOKEN={{ node_token }} sh -
       args:
         executable: /bin/bash
-    # - name: Enable K3S service
-    #   ansible.builtin.systemd:
-    #     name: k3s
-    #     enabled: true
-    #     state: started
-    # - name: Wait for K3S to start
-    #   ansible.builtin.wait_for:
-    #     port: 6443
-    #     state: started
-    #     timeout: 30
