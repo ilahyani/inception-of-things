@@ -1,0 +1,10 @@
+- name: Deploy Application
+  ansible.builtin.shell:
+    cmd: kubectl apply -f "{{ playbook_dir }}/../dev/app.yaml" -n dev
+- name: Wait For Application Pod To Run
+  ansible.builtin.shell:
+    cmd: kubectl wait --for=condition=ready pod -l item=will42 -n dev --timeout=300s
+  register: app_wait_result
+  retries: 3
+  delay: 5
+  until: app_wait_result.rc == 0

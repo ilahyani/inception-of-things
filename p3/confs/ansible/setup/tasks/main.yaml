@@ -1,0 +1,38 @@
+- name: Install Dependencies
+  ansible.builtin.apt:
+    name:
+      - wget
+      - curl
+      - docker.io
+    state: present
+    update_cache: true
+- name: Check if K3d is Installed
+  ansible.builtin.command: which k3d
+  register: k3d_check
+  ignore_errors: true
+  changed_when: false
+- name: Install k3d
+  ansible.builtin.shell:
+    cmd: wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+  when: k3d_check.rc != 0
+- name: Install kubectl
+  ansible.builtin.shell:
+    cmd: |
+      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      chmod +x kubectl
+      mv kubectl /usr/local/bin/
+- name: Check if Cluster Exists
+  ansible.builtin.command: k3d cluster list iot
+  register: cluster_check
+  ignore_errors: true
+  changed_when: false
+- name: Create Cluster
+  ansible.builtin.command: k3d cluster create iot
+  when: cluster_check.rc != 0
+- name: Create Namespaces
+  ansible.builtin.command: kubectl create namespace {{ item }}
+  loop:
+    - dev
+    - argocd
+    - gitlab
+  when: cluster_check.rc != 0
