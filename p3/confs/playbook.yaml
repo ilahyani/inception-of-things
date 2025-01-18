@@ -32,15 +32,15 @@
     - name: Create Cluster and Namespaces
       ansible.builtin.shell:
         cmd: |
-          k3d cluster create iot && \
-          kubectl create namespace dev && \
+          k3d cluster create iot
+          kubectl create namespace dev
           kubectl create namespace argocd
       when: cluster_check.rc != 0
-    - name: Setup Argocd
+    - name: Deploy Argocd
       ansible.builtin.shell:
         cmd: |
-          kubectl apply -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml -n argocd && \
-          kubectl apply -n argocd -f ./dev/argocd.yaml && \
+          kubectl apply -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml -n argocd
+          kubectl apply -n argocd -f ./dev/argocd.yaml
     - name: Wait For Argocd Server Pod To Run
       ansible.builtin.shell:
         cmd: kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=300s
@@ -54,7 +54,7 @@
     - name: Expose Argocd Externally
       ansible.builtin.shell:
         cmd: nohup kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8080:80 >> /tmp/argocd-port-forward.log 2>&1 &
-    - name: Setup Application
+    - name: Deploy Application
       ansible.builtin.shell:
         cmd: kubectl apply -f ./dev/app/app.yaml -n dev
     - name: Wait For Application Pod To Run
@@ -64,6 +64,6 @@
       retries: 3
       delay: 5
       until: app_wait_result.rc == 0
-    - name: Expose Application Externally
-      ansible.builtin.shell:
-        cmd: nohup kubectl port-forward --address 0.0.0.0 svc/will42-service -n dev 8888:8888 >> /tmp/argocd-port-forward.log 2>&1 &
+    # - name: Expose Application Externally
+    #   ansible.builtin.shell:
+    #     cmd: nohup kubectl port-forward --address 0.0.0.0 svc/will42-service -n dev 8888:8888 >> /tmp/argocd-port-forward.log 2>&1 &
