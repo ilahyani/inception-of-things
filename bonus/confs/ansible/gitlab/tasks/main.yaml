@@ -1,0 +1,29 @@
+- name: Deploy Gitlab
+  ansible.builtin.shell:
+    cmd: kubectl apply -f "{{ playbook_dir }}/../gitlab.yaml" -n gitlab
+- name: Wait For Gitlab Pod To Run
+  ansible.builtin.shell:
+    cmd: kubectl wait --for=condition=ready pod -l item=gitlab -n gitlab --timeout=300s
+  register: gitlab_wait_result
+  retries: 3
+  delay: 5
+  until: gitlab_wait_result.rc == 0
+- name: Wait For Gitlab Container To Be Ready
+  ansible.builtin.shell:
+    cmd: kubectl exec -n gitlab $(kubectl get pods -n gitlab -o jsonpath='{.items[0].metadata.name}') -- curl -s http://localhost:80
+  register: gitlab_ready_result
+  retries: 5
+  delay: 90
+  until: gitlab_ready_result.rc == 0
+- name: Save Gitlab Root Password
+  ansible.builtin.shell:
+    cmd: |
+      kubectl exec -n gitlab $(kubectl get pods -n gitlab -o jsonpath='{.items[0].metadata.name}') -- cat /etc/gitlab/initial_root_password  | grep Password: > gitlab.passwd
+  register: get_passwd_result
+- name: Expose Gitlab Externally
+  ansible.builtin.shell:
+    cmd: nohup kubectl port-forward --address 0.0.0.0 svc/gitlab-service -n gitlab 9090:8081 >> /tmp/gitlab-port-forward.log 2>&1 &
+  register: expose_port_result
+  retries: 3
+  delay: 5
+  until: expose_port_result.rc == 0

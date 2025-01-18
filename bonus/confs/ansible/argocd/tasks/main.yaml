@@ -1,0 +1,22 @@
+- name: Add Gitlab Host to Argocd Source Repo
+  ansible.builtin.shell:
+    cmd: |
+      sed -i 's/GITLAB_HOST/$(curl ifconfig.me)/g' "{{ playbook_dir }}/../argocd.yaml"
+- name: Deploy Argocd
+  ansible.builtin.shell:
+    cmd: |
+      kubectl apply -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml -n argocd
+      kubectl apply -n argocd -f "{{ playbook_dir }}/../argocd.yaml"
+- name: Wait For Argocd Server Pod To Run
+  ansible.builtin.shell:
+    cmd: kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=300s
+  register: argo_wait_result
+  retries: 3
+  delay: 5
+  until: argo_wait_result.rc == 0
+- name: Save Argocd Password
+  ansible.builtin.shell:
+    cmd: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d > argocd.passwd
+- name: Expose Argocd Externally
+  ansible.builtin.shell:
+    cmd: nohup kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8080:80 >> /tmp/argocd-port-forward.log 2>&1 &
