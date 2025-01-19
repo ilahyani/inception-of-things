@@ -1,8 +1,0 @@
-- name: setup
-  hosts: localhost
-  gather_facts: false
-  become: true
-  roles:
-    - role: setup
-    - role: application
-    - role: argocd
