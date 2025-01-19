@@ -5,9 +5,9 @@
   vars_files:
     - "{{ playbook_dir }}/../vars/node_token.yml"
   tasks:
-    - name: Debugggggggggggggg
+    - name: Verify Node Token From Agent
       ansible.builtin.debug:
-        msg: "token>>>>>>> {{ node_token }}"
+        msg: "{{ node_token }}"
     - name: Install K3S Agent
       ansible.builtin.shell: |
         curl -sfL https://get.k3s.io | K3S_URL=https://192.168.56.110:6443 K3S_TOKEN={{ node_token }} sh -

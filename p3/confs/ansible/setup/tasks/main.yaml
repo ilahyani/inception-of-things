@@ -26,6 +26,9 @@
   register: cluster_check
   ignore_errors: true
   changed_when: false
+- name: Remove Cluster if Exists
+  ansible.builtin.command: k3d cluster delete iot
+  when: cluster_check.rc == 0
 - name: Create Cluster
   ansible.builtin.command: k3d cluster create iot
   when: cluster_check.rc != 0

@@ -15,7 +15,7 @@
     - name: Set Node Token variable
       ansible.builtin.set_fact:
         node_token: "{{ node_token.content | b64decode }}"
-    - name: Debug
+    - name: Verify Node Token From Server
       ansible.builtin.debug:
         msg: "node_token: {{ node_token }}"
     - name: Save variable to a file

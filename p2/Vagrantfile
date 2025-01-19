@@ -4,16 +4,13 @@ Vagrant.configure("2") do |config|
         ilahyaniS.vm.box = "bento/ubuntu-22.04"
         ilahyaniS.vm.hostname = "ilahyaniS"
         ilahyaniS.vm.network "private_network", ip: "192.168.56.110", interface: "eth1", hostname: true
-        ilahyaniS.vm.provider "vmware_desktop" do |v|
+        # ilahyaniS.vm.provider "vmware_desktop" do |v|
+        ilahyaniS.vm.provider "virtualbox" do |v|
             v.memory = 1024
             v.cpus = 2
         end
-        # ilahyaniS.vm.provider "virtualbox" do |v|
-        #     v.memory = 1024
-        #     v.cpus = 2
-        # end
         ilahyaniS.vm.provision "ansible" do |ansible|
-            ansible.playbook = "ansible/playbook.yml"
+            ansible.playbook = "confs/ansible/playbook.yml"
         end
     end
 

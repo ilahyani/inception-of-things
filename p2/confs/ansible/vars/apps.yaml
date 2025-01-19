@@ -1,15 +1,15 @@
 apps:
-  - name: APP_1
+  - name: app1
     image: "hashicorp/http-echo"
     port: 5678
     hostname: app1.com
     replicas: 1
-  - name: APP_2
+  - name: app1
     image: "hashicorp/http-echo"
     port: 5678
     hostname: app2.com
     replicas: 3
-  - name: APP_3
+  - name: app1
     image: "hashicorp/http-echo"
     port: 5678
     hostname: app3.com
