@@ -27,6 +27,7 @@ const io = new Server(httpServer, { cors: process.env.CLIENT_DOMAIN });
 io.on("connection", (socket) => {
   console.log('Socket Connected');
   socket.on("disconnect", () => {
+    console.log('Socket Disconnected');
     users = users.filter((user) => user.socketID !== socket.id);
     io.emit("newUserResponse", users);
     socket.disconnect();
@@ -58,5 +59,5 @@ app.get("/messages/get", async (request, response) => {
 });
 
 httpServer.listen(port, "0.0.0.0", () => {
-  console.log(`server is up and listening on port ${port}`);
+  console.log(`server is up on port ${port}`);
 });
