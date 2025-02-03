@@ -5,6 +5,8 @@ metadata:
   namespace: argocd
 spec:
   project: default
+  syncPolicy:
+    automated: {}
   source:
     repoURL: https://github.com/ilahyani/inception-of-things
     targetRevision: HEAD
