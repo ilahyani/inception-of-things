@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployement
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      item: backend
+  template:
+    metadata:
+      labels:
+        item: backend
+    spec:
+      containers:
+        - name: backend
+          image: ilahyani/whoami_backend:v1.0.2
+          ports:
+            - containerPort: 5001
+          env:
+            - name: PORT
+              value : "5001"
+            - name: CLIENT_DOMAIN
+              value : "http://frontend-service:4173"
+            - name: REDIS_URL
+              value : "redis://database-service:6379"
+          # resources:
+          #   limits:
+          #     memory: "512Mi"
+          #     cpu: "500m"
+          #   requests:
+          #     memory: "256Mi"
+          #     cpu: "250m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: NodePort
+  selector:
+    item: backend
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001

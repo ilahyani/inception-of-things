@@ -1,10 +1,40 @@
-- name: Deploy Application
+- name: Save Host IP
+  ansible.builtin.command: curl ifconfig.me
+  register: host_ip
+- name: Update Frontend Manifest
   ansible.builtin.shell:
-    cmd: kubectl apply -f "{{ playbook_dir }}/../dev/app.yaml" -n dev
-- name: Wait For Application Pod To Run
+    cmd: |
+      sed -i 's/HOST/{{ host_ip.stdout }}/g' "{{ playbook_dir }}/../k8s/dev/frontend.yaml"
+- name: Deploy applicaiton
   ansible.builtin.shell:
-    cmd: kubectl wait --for=condition=ready pod -l item=will42 -n dev --timeout=300s
-  register: app_wait_result
+    cmd: |
+      kubectl apply -f "{{ playbook_dir }}/../k8s/dev/" -n dev
+- name: Wait Frontend Pods To Run
+  ansible.builtin.shell:
+    cmd: kubectl wait --for=condition=ready pod -l item=frontend -n dev --timeout=300s
+  register: front_wait_result
   retries: 3
   delay: 10
-  until: app_wait_result.rc == 0
+  until: front_wait_result.rc == 0
+- name: Wait Backend Pods To Run
+  ansible.builtin.shell:
+    cmd: kubectl wait --for=condition=ready pod -l item=backend -n dev --timeout=300s
+  register: back_wait_result
+  retries: 3
+  delay: 10
+  until: back_wait_result.rc == 0
+- name: Wait Database Pods To Run
+  ansible.builtin.shell:
+    cmd: kubectl wait --for=condition=ready pod -l item=database -n dev --timeout=300s
+  register: db_wait_result
+  retries: 3
+  delay: 10
+  until: db_wait_result.rc == 0
+- name: Expose Frontend Pods
+  ansible.builtin.shell:
+    cmd: |
+      nohup kubectl port-forward --address 0.0.0.0 svc/frontend-service -n dev 4173:4173 >> /tmp/fe-port-forward.log 2>&1 &
+- name: Expose Backend Pods
+  ansible.builtin.shell:
+    cmd: |
+      nohup kubectl port-forward --address 0.0.0.0 svc/backend-service -n dev 5001:5001 >> /tmp/be-port-forward.log 2>&1 &

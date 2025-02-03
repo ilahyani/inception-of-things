@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      item: frontend
+  template:
+    metadata:
+      labels:
+        item: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ilahyani/whoami_frontend:v1.0.2
+          ports:
+            - containerPort: 4173
+          env:
+            - name: VITE_SERVER_DOMAIN
+              value: "http://HOST:5001"
+          # resources:
+          #   limits:
+          #     memory: "512Mi"
+          #     cpu: "500m"
+          #   requests:
+          #     memory: "256Mi"
+          #     cpu: "250m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: NodePort
+  selector:
+    item: frontend
+  ports:
+    - protocol: TCP
+      port: 4173
+      targetPort: 4173
