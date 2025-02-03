@@ -6,7 +6,7 @@ import React from "react";
 
 const socket = socketIO.connect(import.meta.env.VITE_SERVER_DOMAIN);
 socket.on('connect', () => {
-  console.log('Socket connected');
+  console.log('Socket connected successfully');
 });
 export const SocketContext = React.createContext();
 export default function App() {
