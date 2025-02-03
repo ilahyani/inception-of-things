@@ -59,5 +59,5 @@ app.get("/messages/get", async (request, response) => {
 });
 
 httpServer.listen(port, "0.0.0.0", () => {
-  console.log(`server is up on port ${port}`);
+  console.log(`server is up on ${port}`);
 });
