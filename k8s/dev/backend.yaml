@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ilahyani/whoami_backend:v1.0.2
+          image: ilahyani/whoami_backend:02.03.15.22.33
           ports:
             - containerPort: 5001
           env:
