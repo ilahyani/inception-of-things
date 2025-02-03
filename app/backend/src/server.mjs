@@ -13,11 +13,11 @@ const httpServer = createServer(app);
 const redis = new Redis(process.env.REDIS_URL);
 
 redis.on('connect', () => {
-  console.log('Connected to Redis');
+  console.log('Connected to Redis Successfully');
 });
 
 redis.on('error', (err) => {
-  console.error('Redis connection error:', err);
+  console.error('Failed to connect to Redis:', err);
 });
 
 app.use(cors());
