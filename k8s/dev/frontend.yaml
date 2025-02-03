@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ilahyani/whoami_frontend:v1.0.2
+          image: ilahyani/whoami_frontend:02.03.15.28.21
           ports:
             - containerPort: 4173
           env:
