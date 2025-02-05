@@ -67,7 +67,7 @@ This project uses two GitHub Actions workflows for the frontend and backend comp
   5. Updates Kubernetes manifest with new image tag
   6. Commits and pushes the updated manifest
 
-#### Backend CI ([.github/workflows/deploy-backend.yaml](/.github/workflows/deploy-backend.yaml))
+#### Backend CI
 - Triggered on pushes to `main` branch when changes occur in `app/backend/**`
 - Steps:
   1. Checks out code
