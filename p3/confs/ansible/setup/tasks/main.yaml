@@ -31,11 +31,8 @@
   when: cluster_check.rc == 0
 - name: Create Cluster
   ansible.builtin.command: k3d cluster create iot
-  when: cluster_check.rc != 0
 - name: Create Namespaces
   ansible.builtin.command: kubectl create namespace {{ item }}
   loop:
     - dev
     - argocd
-    - gitlab
-  when: cluster_check.rc != 0
