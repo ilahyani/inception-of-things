@@ -4,7 +4,7 @@
 - name: Add Gitlab Host to Argocd Source Repo
   ansible.builtin.shell:
     cmd: |
-      sed -i 's/GITLAB_HOST/"{{ gitlab_host.stdout }}"/g' "{{ playbook_dir }}/../argocd.yaml"
+      sed -i 's/GITLAB_HOST/{{ gitlab_host.stdout }}/g' "{{ playbook_dir }}/../argocd.yaml"
 - name: Deploy Argocd
   ansible.builtin.shell:
     cmd: |
