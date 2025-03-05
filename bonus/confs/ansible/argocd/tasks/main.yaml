@@ -17,9 +17,13 @@
   retries: 3
   delay: 5
   until: argo_wait_result.rc == 0
-- name: Save Argocd Password
+- name: Get Argocd Password
   ansible.builtin.shell:
-    cmd: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d > argocd.passwd
+    cmd: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+  register: argocd_passwd
+- name: Argocd Password 
+  debug:
+    msg: "Argocd Password: {{ argocd_passwd.stdout }}"
 - name: Expose Argocd Externally
   ansible.builtin.shell:
     cmd: nohup kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8080:80 >> /tmp/argocd-port-forward.log 2>&1 &

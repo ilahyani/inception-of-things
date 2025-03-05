@@ -15,11 +15,14 @@
   retries: 5
   delay: 90
   until: gitlab_ready_result.rc == 0
-- name: Save Gitlab Root Password
+- name: Get Gitlab Root Password
   ansible.builtin.shell:
     cmd: |
-      kubectl exec -n gitlab $(kubectl get pods -n gitlab -o jsonpath='{.items[0].metadata.name}') -- cat /etc/gitlab/initial_root_password  | grep Password: > gitlab.passwd
-  register: get_passwd_result
+      kubectl exec -n gitlab $(kubectl get pods -n gitlab -o jsonpath='{.items[0].metadata.name}') -- cat /etc/gitlab/initial_root_password | grep Password:
+  register: gitlab_passwd
+- name: Gitlab Password 
+  debug:
+    msg: "Gitlab {{ gitlab_passwd.stdout }}"
 - name: Expose Gitlab Externally
   ansible.builtin.shell:
     cmd: nohup kubectl port-forward --address 0.0.0.0 svc/gitlab-service -n gitlab 9090:8081 >> /tmp/gitlab-port-forward.log 2>&1 &
