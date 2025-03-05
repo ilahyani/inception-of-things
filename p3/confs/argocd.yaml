@@ -7,8 +7,12 @@ spec:
   project: default
   source:
     repoURL: https://github.com/ilahyani/inception-of-things
-    targetRevision: HEAD
+    targetRevision: school-subject
     path: p3/confs/dev
   destination:
     server: https://kubernetes.default.svc
     namespace: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
